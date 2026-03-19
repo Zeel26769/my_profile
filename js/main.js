@@ -206,24 +206,30 @@ if (projectsFilter && projectsGrid && projectCards.length > 0) {
   });
 }
 
-// Form Submission
 const contactForm = document.getElementById('contact-form');
 if (contactForm) {
   contactForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
     // Get form data
-    const formData = new FormData(this);
-    const formObject = {};
-    formData.forEach((value, key) => {
-      formObject[key] = value;
-    });
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
     
-    // Here you would typically send the form data to a server
-    console.log('Form submitted:', formObject);
+    // Compose mailto link with form data
+    const mailtoLink = `mailto:zeel.kkp@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`;
+    window.open(mailtoLink, '_blank');
     
     // Show success message
-    alert('Thank you for your message! I will get back to you soon.');
+    const btn = contactForm.querySelector('button[type="submit"]');
+    const originalText = btn.textContent;
+    btn.textContent = '✓ Opening email client...';
+    btn.classList.add('opacity-75');
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.classList.remove('opacity-75');
+    }, 3000);
     
     // Reset form
     this.reset();
@@ -358,20 +364,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Add smooth scrolling to all anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    
-    const targetId = this.getAttribute('href');
-    if (targetId === '#') return;
-    
-    const targetElement = document.querySelector(targetId);
-    if (targetElement) {
-      window.scrollTo({
-        top: targetElement.offsetTop - 80, // Adjust for fixed header
-        behavior: 'smooth'
-      });
-    }
-  });
+// Close modal function (used by onclick handlers in modals)
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+}
+
+// Close any modal on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('[id$="-modal"]').forEach(modal => {
+      if (!modal.classList.contains('hidden')) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    });
+  }
 });
